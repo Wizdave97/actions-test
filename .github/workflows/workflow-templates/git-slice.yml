@@ -1,0 +1,78 @@
+name: Gitslice CI
+
+on:
+  push:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      clientCommitMessage:
+        description: 'Commit message'
+        required: true
+      branch:
+        description: 'Branch to push'
+        required: true
+
+jobs:
+  gitslice-pull:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.16.0]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITSLICE_TOKEN }}
+          ref: master
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install GitSlice and setup Bot
+        run: |
+          npm install -g https://github.com/GitStartHQ/git-slice.git
+          git config --global user.email ${{ secrets.EMAIL }}
+          git config --global user.name ${{ secrets.USERNAME }}
+
+      - name: Gitslice pull
+        run: |
+          git fetch -f
+          git reset --hard origin/master && git pull origin master && git-slice pull --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }} && git push origin master
+
+  gitslice-push:
+    needs: gitslice-pull
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.16.0]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITSLICE_TOKEN }}
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install GitSlice and setup Bot
+        run: |
+          npm install -g https://github.com/GitStartHQ/git-slice.git
+          git config --global user.email "gitstart-bot@gitstart.com"
+          git config --global user.name "GitStart Bot"
+          git config --global pull.rebase true
+
+      - name: Gitslice push
+        run: |
+          git fetch -f
+          git branch
+          git checkout ${{ github.event.inputs.branch }}
+          git pull origin ${{ github.event.inputs.branch }}
+          git status
+          git-slice push --branch ${{ github.event.inputs.branch }} --message "${{ github.event.inputs.clientCommitMessage }}" --author-name ${{ secrets.USERNAME }} --author-email ${{ secrets.EMAIL }} --password ${{ secrets.PASSWORD }}

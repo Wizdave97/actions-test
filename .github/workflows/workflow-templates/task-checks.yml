@@ -1,0 +1,26 @@
+# To enable this workflow create a file in thge root of the repo called CHECKLIST.yml
+# The only key supported in that file is the paths key
+# Each key under paths creates a checklist with those questions 
+# whenever any file that matches that path is updated in the PR
+# paths:
+#   "/**":
+#     - Did you remember to link time doctor tasks?
+#     - Does PR have task link?
+#     - Have you recorded a loom video demoing new features added?
+#     - Are all tests passing?
+#   "src/components/**.ts":
+#     - Did you check that the component visual look still matches design documents?
+#   "docs/**":
+#     - Did you update the README?
+
+on: [pull_request]
+
+jobs:
+  task_checks_job:
+    runs-on: ubuntu-latest
+    name: Task Checks
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Contextual QA Checklists
+        uses: wyozi/contextual-qa-checklist-action@1.0

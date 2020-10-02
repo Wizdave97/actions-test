@@ -1,0 +1,10 @@
+paths:
+  "/**":
+    - Did you remember to link time doctor tasks?
+    - Does PR have task link?
+    - Have you recorded a loom video demoing new features added?
+    - Are all tests passing?
+  "src/components/**.ts":
+    - Did you check that the component visual look still matches design documents?
+  "docs/**":
+    - Did you update the README?
