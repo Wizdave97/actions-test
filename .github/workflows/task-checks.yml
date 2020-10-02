@@ -24,3 +24,5 @@ jobs:
         uses: actions/checkout@v1
       - name: Contextual QA Checklists
         uses: wyozi/contextual-qa-checklist-action@1.0
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
