@@ -12,7 +12,7 @@
 #     - Did you check that the component visual look still matches design documents?
 #   "docs/**":
 #     - Did you update the README?
-
+name: Task Checks
 on: [pull_request]
 
 jobs:
