@@ -1,5 +1,5 @@
 paths:
-  "/**":
+  "/**.*":
     - Did you remember to link time doctor tasks?
     - Does PR have task link?
     - Have you recorded a loom video demoing new features added?
